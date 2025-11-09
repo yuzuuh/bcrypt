@@ -1,5 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -24,9 +25,16 @@ app.use(
   })
 );
 
+// Ejemplo con bcrypt
+const saltRounds = 12;
+const myPlaintextPassword = "somesupersecret";
+
+bcrypt.hash(myPlaintextPassword, saltRounds)
+  .then(hash => console.log("Hashed password:", hash))
+  .catch(err => console.error(err));
+
+// Exportar app
 module.exports = app;
-
-
 
 
 
