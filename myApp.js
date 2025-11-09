@@ -23,6 +23,15 @@ app.use(helmet.contentSecurityPolicy({
   }
 }));
 
+const bcrypt = require('bcrypt');
+
+const saltRounds = 12;
+const myPlaintextPassword = "somesupersecret";
+bcrypt.hash(myPlaintextPassword, saltRounds, (err, hash) => {
+  if (err) console.error(err);
+  console.log("Hashed password:", hash);
+});
+
 module.exports = app;
 
 
