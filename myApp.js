@@ -4,20 +4,26 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "trusted-cdn.com"],
-      },
-    },
-    frameguard: { action: 'deny' },
-    hsts: { maxAge: 90 * 24 * 60 * 60, force: true },
-    dnsPrefetchControl: true,
-  })
-);
+// Primero, ocultamos el header de Express
+app.use(helmet.hidePoweredBy());
+
+// Luego, aplicamos el resto de políticas de seguridad
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "trusted-cdn.com"]
+    }
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: { policy: "same-origin" },
+  crossOriginResourcePolicy: { policy: "same-origin" },
+  frameguard: { action: 'deny' },
+  hsts: { maxAge: 90 * 24 * 60 * 60, force: true },
+  noSniff: true,
+  ieNoOpen: true,
+  dnsPrefetchControl: true
+}));
 
 const saltRounds = 12;
 const myPlaintextPassword = "somesupersecret";
@@ -27,6 +33,7 @@ bcrypt.hash(myPlaintextPassword, saltRounds)
   .catch(err => console.error(err));
 
 module.exports = app;
+
 
 
 
