@@ -4,33 +4,38 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-// Primero, ocultamos el header de Express
+// ✅ Aplica cada middleware de Helmet correctamente
 app.use(helmet.hidePoweredBy());
+app.use(helmet.frameguard({ action: 'deny' }));
+app.use(helmet.noSniff());
+app.use(helmet.ieNoOpen());
+app.use(helmet.dnsPrefetchControl());
 
-// Luego, aplicamos el resto de políticas de seguridad
-app.use(helmet({
-  contentSecurityPolicy: {
+const ninetyDaysInSeconds = 90 * 24 * 60 * 60;
+app.use(
+  helmet.hsts({
+    maxAge: ninetyDaysInSeconds,
+    force: true,
+  })
+);
+
+app.use(
+  helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "trusted-cdn.com"]
-    }
-  },
-  crossOriginEmbedderPolicy: false,
-  crossOriginOpenerPolicy: { policy: "same-origin" },
-  crossOriginResourcePolicy: { policy: "same-origin" },
-  frameguard: { action: 'deny' },
-  hsts: { maxAge: 90 * 24 * 60 * 60, force: true },
-  noSniff: true,
-  ieNoOpen: true,
-  dnsPrefetchControl: true
-}));
+      scriptSrc: ["'self'", "trusted-cdn.com"],
+    },
+  })
+);
 
+// 🔒 Ejemplo de uso de bcrypt
 const saltRounds = 12;
-const myPlaintextPassword = "somesupersecret";
+const myPlaintextPassword = 'somesupersecret';
 
-bcrypt.hash(myPlaintextPassword, saltRounds)
-  .then(hash => console.log("Hashed password:", hash))
-  .catch(err => console.error(err));
+bcrypt
+  .hash(myPlaintextPassword, saltRounds)
+  .then((hash) => console.log('Hashed password:', hash))
+  .catch((err) => console.error(err));
 
 module.exports = app;
 
