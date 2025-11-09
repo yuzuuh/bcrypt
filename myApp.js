@@ -4,40 +4,29 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-// ✅ Aplica cada middleware de Helmet correctamente
+// 🔒 Usa cada middleware de Helmet por separado
 app.use(helmet.hidePoweredBy());
-app.use(helmet.frameguard({ action: 'deny' }));
 app.use(helmet.noSniff());
-app.use(helmet.ieNoOpen());
-app.use(helmet.dnsPrefetchControl());
+app.use(helmet.xssFilter());
+app.use(helmet.frameguard({ action: 'deny' }));
+app.use(helmet.crossOriginEmbedderPolicy({ policy: 'credentialless' }));
+app.use(helmet.crossOriginOpenerPolicy({ policy: 'same-origin' }));
+app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
 
-const ninetyDaysInSeconds = 90 * 24 * 60 * 60;
-app.use(
-  helmet.hsts({
-    maxAge: ninetyDaysInSeconds,
-    force: true,
-  })
-);
-
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "trusted-cdn.com"],
-    },
-  })
-);
-
-// 🔒 Ejemplo de uso de bcrypt
+// 🧂 Ejemplo de bcrypt
 const saltRounds = 12;
-const myPlaintextPassword = 'somesupersecret';
+const password = 'myPassword123';
 
-bcrypt
-  .hash(myPlaintextPassword, saltRounds)
-  .then((hash) => console.log('Hashed password:', hash))
-  .catch((err) => console.error(err));
+bcrypt.hash(password, saltRounds, (err, hash) => {
+  if (err) {
+    console.error('Error al hashear:', err);
+  } else {
+    console.log('Hashed password:', hash);
+  }
+});
 
 module.exports = app;
+
 
 
 
