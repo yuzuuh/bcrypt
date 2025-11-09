@@ -3,8 +3,7 @@ const helmet = require('helmet');
 const app = express();
 
 app.use(helmet.hidePoweredBy());
-app.use(helmet.frameguard({ action: 'deny' }));
-app.use(helmet.xssProtection());
+app.use(helmet.frameguard({ action: 'deny'}));
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
 
@@ -24,13 +23,14 @@ app.use(helmet.contentSecurityPolicy({
 }));
 
 const bcrypt = require('bcrypt');
-
 const saltRounds = 12;
 const myPlaintextPassword = "somesupersecret";
-bcrypt.hash(myPlaintextPassword, saltRounds, (err, hash) => {
-  if (err) console.error(err);
-  console.log("Hashed password:", hash);
-});
+
+bcrypt.hash(myPlaintextPassword, saltRounds)
+  .then(hash => {
+    console.log("Hashed password:", hash);
+  })
+  .catch(err => console.error(err));
 
 module.exports = app;
 
