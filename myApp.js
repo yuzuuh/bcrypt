@@ -4,29 +4,30 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-// Configuración moderna de Helmet
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "trusted-cdn.com"]
-    }
-  },
-  crossOriginEmbedderPolicy: false, // Evita errores en entornos sin COEP
-  crossOriginResourcePolicy: false
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "trusted-cdn.com"],
+      },
+    },
+    frameguard: { action: 'deny' },
+    hsts: { maxAge: 90 * 24 * 60 * 60, force: true },
+    dnsPrefetchControl: true,
+  })
+);
 
-// bcrypt para encriptar contraseñas
 const saltRounds = 12;
 const myPlaintextPassword = "somesupersecret";
 
 bcrypt.hash(myPlaintextPassword, saltRounds)
-  .then(hash => {
-    console.log("Hashed password:", hash);
-  })
+  .then(hash => console.log("Hashed password:", hash))
   .catch(err => console.error(err));
 
 module.exports = app;
+
 
 
 
