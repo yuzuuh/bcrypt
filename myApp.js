@@ -4,7 +4,7 @@ const app = express();
 
 app.use(helmet.hidePoweredBy());
 app.use(helmet.frameguard({ action: 'deny' }));
-app.use(helmet.xssFilter());
+app.use(helmet.xssProtection());
 app.use(helmet.noSniff());
 app.use(helmet.ieNoOpen());
 
@@ -15,7 +15,6 @@ app.use(helmet.hsts({
 }));
 
 app.use(helmet.dnsPrefetchControl());
-app.use(helmet.noCache());
 
 app.use(helmet.contentSecurityPolicy({
   directives: {
