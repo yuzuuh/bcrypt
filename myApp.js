@@ -1,28 +1,22 @@
 const express = require('express');
 const helmet = require('helmet');
+const bcrypt = require('bcrypt');
+
 const app = express();
 
-app.use(helmet.hidePoweredBy());
-app.use(helmet.frameguard({ action: 'deny'}));
-app.use(helmet.noSniff());
-app.use(helmet.ieNoOpen());
-
-const ninetyDaysInSeconds = 90 * 24 * 60 * 60;
-app.use(helmet.hsts({
-  maxAge: ninetyDaysInSeconds,
-  force: true
+// Configuración moderna de Helmet
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "trusted-cdn.com"]
+    }
+  },
+  crossOriginEmbedderPolicy: false, // Evita errores en entornos sin COEP
+  crossOriginResourcePolicy: false
 }));
 
-app.use(helmet.dnsPrefetchControl());
-
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "trusted-cdn.com"]
-  }
-}));
-
-const bcrypt = require('bcrypt');
+// bcrypt para encriptar contraseñas
 const saltRounds = 12;
 const myPlaintextPassword = "somesupersecret";
 
