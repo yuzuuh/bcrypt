@@ -4,26 +4,8 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-// Configuración de Helmet con varias protecciones
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "trusted-cdn.com"]
-      }
-    },
-    crossOriginEmbedderPolicy: false,
-    crossOriginOpenerPolicy: { policy: "same-origin" },
-    crossOriginResourcePolicy: { policy: "same-origin" },
-    frameguard: { action: 'deny' },
-    hsts: { maxAge: 90 * 24 * 60 * 60, force: true },
-    noSniff: true,
-    ieNoOpen: true,
-    dnsPrefetchControl: true,
-    hidePoweredBy: true
-  })
-);
+// Helmet simple (seguro y compatible con freeCodeCamp)
+app.use(helmet());
 
 // Ejemplo con bcrypt
 const saltRounds = 12;
@@ -33,8 +15,8 @@ bcrypt.hash(myPlaintextPassword, saltRounds)
   .then(hash => console.log("Hashed password:", hash))
   .catch(err => console.error(err));
 
-// Exportar app
 module.exports = app;
+
 
 
 
