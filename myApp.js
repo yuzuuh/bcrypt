@@ -4,26 +4,15 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 
-// 🔒 Usa cada middleware de Helmet por separado
-app.use(helmet.hidePoweredBy());
-app.use(helmet.noSniff());
-app.use(helmet.xssFilter());
-app.use(helmet.frameguard({ action: 'deny' }));
-app.use(helmet.crossOriginEmbedderPolicy({ policy: 'credentialless' }));
-app.use(helmet.crossOriginOpenerPolicy({ policy: 'same-origin' }));
-app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
+// Usa Helmet con la configuración por defecto (versión 8)
+app.use(helmet());
 
-// 🧂 Ejemplo de bcrypt
 const saltRounds = 12;
-const password = 'myPassword123';
+const myPlaintextPassword = "somesupersecret";
 
-bcrypt.hash(password, saltRounds, (err, hash) => {
-  if (err) {
-    console.error('Error al hashear:', err);
-  } else {
-    console.log('Hashed password:', hash);
-  }
-});
+bcrypt.hash(myPlaintextPassword, saltRounds)
+  .then(hash => console.log("Hashed password:", hash))
+  .catch(err => console.error(err));
 
 module.exports = app;
 
